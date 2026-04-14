@@ -52,11 +52,12 @@ export default function Index() {
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-6"
         style={{ background: "linear-gradient(to bottom, rgba(13,13,11,0.95), transparent)" }}>
-        <div className="flex items-center gap-3">
-          <div className="w-7 h-7 border flex items-center justify-center" style={{ borderColor: "rgba(201,168,76,0.5)" }}>
-            <div className="w-3 h-3" style={{ background: "var(--gold)" }} />
-          </div>
-          <span className="font-display text-2xl font-light tracking-[0.2em]" style={{ color: "var(--cream)", fontFamily: "Cormorant Garamond, serif" }}>DOMIO</span>
+        <div className="flex items-center">
+          <img
+            src="https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/bucket/a6c2b279-1968-43e3-979a-943b73c99064.jpg"
+            alt="DOMIO"
+            style={{ height: "48px", width: "auto", filter: "invert(1) brightness(2)" }}
+          />
         </div>
 
         <div className="hidden md:flex items-center gap-8">
@@ -128,12 +129,11 @@ export default function Index() {
           <span className="text-xs tracking-widest uppercase" style={{ writingMode: "vertical-lr", fontFamily: "Montserrat", color: "var(--cream-muted)" }}>Scroll</span>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 hidden md:grid grid-cols-4 border-t"
+        <div className="absolute bottom-0 left-0 right-0 hidden md:grid grid-cols-3 border-t"
           style={{ borderColor: "rgba(201,168,76,0.15)", background: "rgba(13,13,11,0.7)", backdropFilter: "blur(20px)" }}>
           {[
             { num: "200+", label: "Реализованных проектов" },
             { num: "18", label: "Лет на рынке" },
-            { num: "98%", label: "Довольных клиентов" },
             { num: "10 лет", label: "Гарантия на строительство" },
           ].map((s, i) => (
             <div key={i} className="px-10 py-6 border-r last:border-r-0" style={{ borderColor: "rgba(201,168,76,0.15)" }}>
@@ -150,7 +150,7 @@ export default function Index() {
           <div>
             <div className="section-tag mb-4">Наши работы</div>
             <h2 className="font-light" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", color: "var(--cream)" }}>
-              Избранные<br /><em style={{ color: "var(--gold)" }}>проекты</em>
+              <em style={{ color: "var(--gold)" }}>Проекты</em>
             </h2>
           </div>
           <button className="btn-gold hidden md:block" onClick={() => {}}>
@@ -400,11 +400,12 @@ export default function Index() {
       {/* FOOTER */}
       <footer className="py-10 px-8 md:px-16 border-t" style={{ borderColor: "rgba(201,168,76,0.15)" }}>
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 border flex items-center justify-center" style={{ borderColor: "rgba(201,168,76,0.4)" }}>
-              <div className="w-2.5 h-2.5" style={{ background: "var(--gold)" }} />
-            </div>
-            <span className="font-light text-xl tracking-[0.2em]" style={{ fontFamily: "Cormorant Garamond, serif", color: "var(--cream)" }}>DOMIO</span>
+          <div className="flex items-center">
+            <img
+              src="https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/bucket/a6c2b279-1968-43e3-979a-943b73c99064.jpg"
+              alt="DOMIO"
+              style={{ height: "36px", width: "auto", filter: "invert(1) brightness(2)" }}
+            />
           </div>
           <div className="text-xs tracking-widest" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>
             © 2024 DOMIO. Все права защищены
