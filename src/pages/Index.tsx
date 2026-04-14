@@ -66,7 +66,7 @@ export default function Index() {
     return () => observerRef.current?.disconnect();
   }, []);
 
-  const navItems = ["Главная", "Проекты", "Типовые проекты", "О компании", "Процесс", "Контакты"];
+  const navItems = ["Главная", "Проекты", "Типовые проекты", "О компании", "Контакты"];
 
   return (
     <div className="min-h-screen overflow-x-hidden" style={{ background: "var(--obsidian)" }}>
@@ -334,59 +334,6 @@ export default function Index() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PROCESS */}
-      <section id="process" className="py-24 px-8 md:px-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="scroll-fade flex flex-col md:flex-row md:items-end justify-between mb-20">
-            <div>
-              <div className="section-tag mb-4">Как мы работаем</div>
-              <h2 className="font-light" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(2.5rem, 5vw, 4rem)", color: "var(--cream)" }}>
-                Процесс<br /><em style={{ color: "var(--gold)" }}>строительства</em>
-              </h2>
-            </div>
-            <p className="text-sm mt-6 md:mt-0 max-w-xs leading-relaxed" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>
-              Прозрачный путь от идеи до ключей — без скрытых платежей и задержек
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-            {processSteps.map((step, i) => (
-              <div key={i} className="scroll-fade relative border-r last:border-r-0 pr-8 pl-6 py-8 group"
-                style={{ borderColor: "rgba(201,168,76,0.15)" }}>
-                <div className="absolute top-[-10px] left-[-10px] font-light leading-none pointer-events-none"
-                  style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "5rem", color: "rgba(201,168,76,0.12)" }}>
-                  {step.num}
-                </div>
-                <div className="relative">
-                  <div className="w-10 h-10 border mb-6 flex items-center justify-center transition-all duration-300"
-                    style={{ borderColor: "rgba(201,168,76,0.4)" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--gold)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
-                    <Icon name={step.icon} fallback="Star" size={16} style={{ color: "var(--gold)" }} />
-                  </div>
-                  <h3 className="font-light text-xl mb-3" style={{ fontFamily: "Cormorant Garamond, serif", color: "var(--cream)" }}>{step.title}</h3>
-                  <p className="text-xs leading-relaxed" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>{step.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="scroll-fade mt-20 relative overflow-hidden" style={{ height: "400px" }}>
-            <img src={AERIAL_IMG} alt="Строительство" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 flex items-center justify-center flex-col gap-6"
-              style={{ background: "rgba(13,13,11,0.6)" }}>
-              <div className="section-tag">Посмотрите как мы строим</div>
-              <h3 className="font-light text-4xl md:text-5xl text-center" style={{ fontFamily: "Cormorant Garamond, serif", color: "var(--cream)" }}>
-                Видео-тур по<br />процессу строительства
-              </h3>
-              <button className="video-play-btn" onClick={() => setVideoModal("dQw4w9WgXcQ")}>
-                <Icon name="Play" size={24} style={{ color: "white", marginLeft: "3px" }} />
-              </button>
-            </div>
           </div>
         </div>
       </section>
