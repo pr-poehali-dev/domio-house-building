@@ -6,10 +6,27 @@ const INTERIOR_IMG = "https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0
 const AERIAL_IMG = "https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/files/5529b4d0-bddf-477a-841a-d63255838237.jpg";
 
 const projects = [
-  { id: 1, title: "Резиденция «Альпийский склон»", category: "Индивидуальный проект", area: "480 м²", year: "2024", image: HERO_IMG, videoId: "dQw4w9WgXcQ" },
-  { id: 2, title: "Вилла «Лесной массив»", category: "Типовой проект", area: "320 м²", year: "2024", image: AERIAL_IMG, videoId: "dQw4w9WgXcQ" },
-  { id: 3, title: "Особняк «Панорама»", category: "Индивидуальный проект", area: "620 м²", year: "2023", image: INTERIOR_IMG, videoId: "dQw4w9WgXcQ" },
-  { id: 4, title: "Усадьба «Берег»", category: "Типовой проект", area: "280 м²", year: "2023", image: HERO_IMG, videoId: "dQw4w9WgXcQ" },
+  {
+    id: 5,
+    title: "Дом на ул. Озёрная, д.10",
+    category: "Завершённый объект",
+    area: "п. Новые Сокуры",
+    year: "2024",
+    date: "22.12.2024",
+    image: "https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/bucket/07d70ce6-6ed7-443d-afb0-4dc9e7736a15.JPG",
+    photos: [
+      "https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/bucket/07d70ce6-6ed7-443d-afb0-4dc9e7736a15.JPG",
+      "https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/bucket/c0b6926c-cf52-4d77-9de6-e4b210f4fed5.JPG",
+      "https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/bucket/c878544e-e99f-426b-ac52-0a6da5b48ba9.JPG",
+      "https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/bucket/5b709b0a-b03f-4caf-9cf4-9626cab08530.JPG",
+    ],
+    author: "Салават",
+    videoId: null,
+  },
+  { id: 1, title: "Резиденция «Альпийский склон»", category: "Индивидуальный проект", area: "480 м²", year: "2024", image: HERO_IMG, photos: [], author: null, date: null, videoId: "dQw4w9WgXcQ" },
+  { id: 2, title: "Вилла «Лесной массив»", category: "Типовой проект", area: "320 м²", year: "2024", image: AERIAL_IMG, photos: [], author: null, date: null, videoId: "dQw4w9WgXcQ" },
+  { id: 3, title: "Особняк «Панорама»", category: "Индивидуальный проект", area: "620 м²", year: "2023", image: INTERIOR_IMG, photos: [], author: null, date: null, videoId: "dQw4w9WgXcQ" },
+  { id: 4, title: "Усадьба «Берег»", category: "Типовой проект", area: "280 м²", year: "2023", image: HERO_IMG, photos: [], author: null, date: null, videoId: "dQw4w9WgXcQ" },
 ];
 
 const processSteps = [
@@ -28,6 +45,7 @@ const typicalProjects = [
 export default function Index() {
   const [activeNav, setActiveNav] = useState("главная");
   const [videoModal, setVideoModal] = useState<string | null>(null);
+  const [photoModal, setPhotoModal] = useState<{ photos: string[]; index: number; title: string } | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -163,21 +181,44 @@ export default function Index() {
             <div key={project.id} className="project-card scroll-fade group" style={{ height: i === 0 ? "500px" : "360px" }}>
               <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
               <div className="overlay" />
+              {project.date && (
+                <div className="absolute top-4 left-4 px-3 py-1 text-xs tracking-wider"
+                  style={{ background: "var(--gold)", color: "var(--obsidian)", fontFamily: "Montserrat", fontWeight: 600 }}>
+                  {project.date}
+                </div>
+              )}
               <div className="absolute inset-0 flex flex-col justify-end p-8">
                 <div className="flex items-center gap-3 mb-3">
                   <span className="section-tag" style={{ opacity: 0.8 }}>{project.category}</span>
                   <span className="text-xs" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>· {project.area} · {project.year}</span>
                 </div>
                 <h3 className="font-light text-2xl md:text-3xl mb-4" style={{ fontFamily: "Cormorant Garamond, serif", color: "var(--cream)" }}>{project.title}</h3>
+                {project.author && (
+                  <div className="text-xs mb-3" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>
+                    Фото: {project.author}
+                  </div>
+                )}
                 <div className="flex items-center gap-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <button className="flex items-center gap-2 text-xs tracking-widest uppercase"
-                    style={{ fontFamily: "Montserrat", color: "var(--gold)" }}
-                    onClick={() => setVideoModal(project.videoId)}>
-                    <div className="w-8 h-8 border rounded-full flex items-center justify-center" style={{ borderColor: "var(--gold)" }}>
-                      <Icon name="Play" size={12} style={{ color: "var(--gold)" }} />
-                    </div>
-                    Видео-тур
-                  </button>
+                  {project.photos.length > 0 && (
+                    <button className="flex items-center gap-2 text-xs tracking-widest uppercase"
+                      style={{ fontFamily: "Montserrat", color: "var(--gold)" }}
+                      onClick={() => setPhotoModal({ photos: project.photos, index: 0, title: project.title })}>
+                      <div className="w-8 h-8 border rounded-full flex items-center justify-center" style={{ borderColor: "var(--gold)" }}>
+                        <Icon name="Images" size={12} style={{ color: "var(--gold)" }} />
+                      </div>
+                      Фото ({project.photos.length})
+                    </button>
+                  )}
+                  {project.videoId && (
+                    <button className="flex items-center gap-2 text-xs tracking-widest uppercase"
+                      style={{ fontFamily: "Montserrat", color: "var(--gold)" }}
+                      onClick={() => setVideoModal(project.videoId)}>
+                      <div className="w-8 h-8 border rounded-full flex items-center justify-center" style={{ borderColor: "var(--gold)" }}>
+                        <Icon name="Play" size={12} style={{ color: "var(--gold)" }} />
+                      </div>
+                      Видео-тур
+                    </button>
+                  )}
                   <button className="text-xs tracking-widest uppercase transition-colors hover:text-gold"
                     style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>
                     Подробнее →
@@ -420,6 +461,60 @@ export default function Index() {
           </div>
         </div>
       </footer>
+
+      {/* PHOTO MODAL */}
+      {photoModal && (
+        <div className="modal-backdrop" onClick={() => setPhotoModal(null)}>
+          <div style={{ width: "92vw", maxWidth: "1100px", position: "relative" }} onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <div className="text-xs tracking-widest uppercase mb-1" style={{ fontFamily: "Montserrat", color: "var(--gold)" }}>
+                  {photoModal.index + 1} / {photoModal.photos.length}
+                </div>
+                <div className="font-light text-xl" style={{ fontFamily: "Cormorant Garamond, serif", color: "var(--cream)" }}>
+                  {photoModal.title}
+                </div>
+              </div>
+              <button className="flex items-center gap-2 transition-colors"
+                style={{ fontFamily: "Montserrat", fontSize: "0.75rem", letterSpacing: "0.1em", color: "var(--cream-muted)" }}
+                onClick={() => setPhotoModal(null)}>
+                Закрыть <Icon name="X" size={16} />
+              </button>
+            </div>
+            <div style={{ position: "relative", aspectRatio: "16/9" }}>
+              <img
+                src={photoModal.photos[photoModal.index]}
+                alt={`${photoModal.title} — фото ${photoModal.index + 1}`}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+              {photoModal.photos.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setPhotoModal({ ...photoModal, index: (photoModal.index - 1 + photoModal.photos.length) % photoModal.photos.length })}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center transition-all"
+                    style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", border: "1px solid rgba(201,168,76,0.3)" }}>
+                    <Icon name="ChevronLeft" size={20} style={{ color: "var(--cream)" }} />
+                  </button>
+                  <button
+                    onClick={() => setPhotoModal({ ...photoModal, index: (photoModal.index + 1) % photoModal.photos.length })}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center transition-all"
+                    style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", border: "1px solid rgba(201,168,76,0.3)" }}>
+                    <Icon name="ChevronRight" size={20} style={{ color: "var(--cream)" }} />
+                  </button>
+                </>
+              )}
+            </div>
+            <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+              {photoModal.photos.map((photo, idx) => (
+                <button key={idx} onClick={() => setPhotoModal({ ...photoModal, index: idx })}
+                  style={{ flexShrink: 0, width: "80px", height: "56px", border: idx === photoModal.index ? "2px solid var(--gold)" : "2px solid transparent", opacity: idx === photoModal.index ? 1 : 0.5, transition: "all 0.2s" }}>
+                  <img src={photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* VIDEO MODAL */}
       {videoModal && (
