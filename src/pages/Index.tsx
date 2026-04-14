@@ -46,6 +46,7 @@ export default function Index() {
   const [activeNav, setActiveNav] = useState("главная");
   const [videoModal, setVideoModal] = useState<string | null>(null);
   const [photoModal, setPhotoModal] = useState<{ photos: string[]; index: number; title: string } | null>(null);
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -176,58 +177,103 @@ export default function Index() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {projects.map((project, i) => (
-            <div key={project.id} className="project-card scroll-fade group" style={{ height: i === 0 ? "500px" : "360px" }}>
-              <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
-              <div className="overlay" />
-              {project.date && (
-                <div className="absolute top-4 left-4 px-3 py-1 text-xs tracking-wider"
-                  style={{ background: "var(--gold)", color: "var(--obsidian)", fontFamily: "Montserrat", fontWeight: 600 }}>
-                  {project.date}
-                </div>
-              )}
-              <div className="absolute inset-0 flex flex-col justify-end p-8">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="section-tag" style={{ opacity: 0.8 }}>{project.category}</span>
-                  <span className="text-xs" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>· {project.area} · {project.year}</span>
-                </div>
-                <h3 className="font-light text-2xl md:text-3xl mb-4" style={{ fontFamily: "Cormorant Garamond, serif", color: "var(--cream)" }}>{project.title}</h3>
-                {project.author && (
-                  <div className="text-xs mb-3" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>
-                    Фото: {project.author}
+        {/* Carousel */}
+        {(() => {
+          const total = projects.length;
+          const prev = () => setCarouselIndex((carouselIndex - 1 + total) % total);
+          const next = () => setCarouselIndex((carouselIndex + 1) % total);
+          const project = projects[carouselIndex];
+          return (
+            <div className="scroll-fade">
+              <div className="project-card group relative" style={{ height: "560px" }}>
+                <img src={project.image} alt={project.title} className="w-full h-full object-cover" style={{ transition: "opacity 0.4s ease" }} />
+                <div className="overlay" />
+                {project.date && (
+                  <div className="absolute top-6 left-6 px-3 py-1 text-xs tracking-wider"
+                    style={{ background: "var(--gold)", color: "var(--obsidian)", fontFamily: "Montserrat", fontWeight: 600 }}>
+                    {project.date}
                   </div>
                 )}
-                <div className="flex items-center gap-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  {project.photos.length > 0 && (
-                    <button className="flex items-center gap-2 text-xs tracking-widest uppercase"
-                      style={{ fontFamily: "Montserrat", color: "var(--gold)" }}
-                      onClick={() => setPhotoModal({ photos: project.photos, index: 0, title: project.title })}>
-                      <div className="w-8 h-8 border rounded-full flex items-center justify-center" style={{ borderColor: "var(--gold)" }}>
-                        <Icon name="Images" size={12} style={{ color: "var(--gold)" }} />
-                      </div>
-                      Фото ({project.photos.length})
-                    </button>
+                <button onClick={prev}
+                  className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center transition-all hover:scale-110"
+                  style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(6px)", border: "1px solid rgba(201,168,76,0.35)" }}>
+                  <Icon name="ChevronLeft" size={20} style={{ color: "var(--cream)" }} />
+                </button>
+                <button onClick={next}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center transition-all hover:scale-110"
+                  style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(6px)", border: "1px solid rgba(201,168,76,0.35)" }}>
+                  <Icon name="ChevronRight" size={20} style={{ color: "var(--cream)" }} />
+                </button>
+                <div className="absolute top-6 right-6 px-3 py-1 text-xs tracking-widest"
+                  style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(6px)", fontFamily: "Montserrat", color: "var(--cream-muted)", border: "1px solid rgba(201,168,76,0.2)" }}>
+                  {carouselIndex + 1} / {total}
+                </div>
+                <div className="absolute inset-0 flex flex-col justify-end p-8">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="section-tag" style={{ opacity: 0.85 }}>{project.category}</span>
+                    <span className="text-xs" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>· {project.area} · {project.year}</span>
+                  </div>
+                  <h3 className="font-light mb-4" style={{ fontFamily: "Cormorant Garamond, serif", fontSize: "clamp(1.6rem, 3vw, 2.5rem)", color: "var(--cream)" }}>{project.title}</h3>
+                  {project.author && (
+                    <div className="text-xs mb-3" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>Фото: {project.author}</div>
                   )}
-                  {project.videoId && (
-                    <button className="flex items-center gap-2 text-xs tracking-widest uppercase"
-                      style={{ fontFamily: "Montserrat", color: "var(--gold)" }}
-                      onClick={() => setVideoModal(project.videoId)}>
-                      <div className="w-8 h-8 border rounded-full flex items-center justify-center" style={{ borderColor: "var(--gold)" }}>
-                        <Icon name="Play" size={12} style={{ color: "var(--gold)" }} />
-                      </div>
-                      Видео-тур
-                    </button>
-                  )}
-                  <button className="text-xs tracking-widest uppercase transition-colors hover:text-gold"
-                    style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>
-                    Подробнее →
-                  </button>
+                  <div className="flex items-center gap-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {project.photos.length > 0 && (
+                      <button className="flex items-center gap-2 text-xs tracking-widest uppercase"
+                        style={{ fontFamily: "Montserrat", color: "var(--gold)" }}
+                        onClick={() => setPhotoModal({ photos: project.photos, index: 0, title: project.title })}>
+                        <div className="w-8 h-8 border rounded-full flex items-center justify-center" style={{ borderColor: "var(--gold)" }}>
+                          <Icon name="Images" size={12} style={{ color: "var(--gold)" }} />
+                        </div>
+                        Фото ({project.photos.length})
+                      </button>
+                    )}
+                    {project.videoId && (
+                      <button className="flex items-center gap-2 text-xs tracking-widest uppercase"
+                        style={{ fontFamily: "Montserrat", color: "var(--gold)" }}
+                        onClick={() => setVideoModal(project.videoId)}>
+                        <div className="w-8 h-8 border rounded-full flex items-center justify-center" style={{ borderColor: "var(--gold)" }}>
+                          <Icon name="Play" size={12} style={{ color: "var(--gold)" }} />
+                        </div>
+                        Видео-тур
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
+
+              <div className="flex gap-3 mt-4 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+                {projects.map((p, idx) => (
+                  <button key={p.id} onClick={() => setCarouselIndex(idx)}
+                    className="flex-shrink-0 relative overflow-hidden"
+                    style={{
+                      width: "140px", height: "90px",
+                      border: idx === carouselIndex ? "2px solid var(--gold)" : "2px solid transparent",
+                      opacity: idx === carouselIndex ? 1 : 0.5,
+                      transition: "all 0.3s ease",
+                    }}>
+                    <img src={p.image} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    {idx === carouselIndex && (
+                      <div className="absolute inset-0" style={{ background: "rgba(201,168,76,0.12)" }} />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-center gap-2 mt-5">
+                {projects.map((_, idx) => (
+                  <button key={idx} onClick={() => setCarouselIndex(idx)}
+                    style={{
+                      width: idx === carouselIndex ? "28px" : "8px",
+                      height: "3px",
+                      background: idx === carouselIndex ? "var(--gold)" : "rgba(201,168,76,0.3)",
+                      transition: "all 0.3s ease",
+                    }} />
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
+          );
+        })()}
       </section>
 
       {/* TYPICAL PROJECTS */}
