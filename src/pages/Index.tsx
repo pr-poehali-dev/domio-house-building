@@ -23,10 +23,10 @@ const projects = [
     author: "Салават",
     videoId: null,
   },
-  { id: 1, title: "Резиденция «Альпийский склон»", category: "Индивидуальный проект", area: "480 м²", year: "2024", image: HERO_IMG, photos: [], author: null, date: null, videoId: "dQw4w9WgXcQ" },
-  { id: 2, title: "Вилла «Лесной массив»", category: "Типовой проект", area: "320 м²", year: "2024", image: AERIAL_IMG, photos: [], author: null, date: null, videoId: "dQw4w9WgXcQ" },
-  { id: 3, title: "Особняк «Панорама»", category: "Индивидуальный проект", area: "620 м²", year: "2023", image: INTERIOR_IMG, photos: [], author: null, date: null, videoId: "dQw4w9WgXcQ" },
-  { id: 4, title: "Усадьба «Берег»", category: "Типовой проект", area: "280 м²", year: "2023", image: HERO_IMG, photos: [], author: null, date: null, videoId: "dQw4w9WgXcQ" },
+  { id: 1, title: "Резиденция «Альпийский склон»", category: "Индивидуальный проект", area: "480 м²", year: "2024", image: HERO_IMG, photos: [HERO_IMG, INTERIOR_IMG, AERIAL_IMG], author: null, date: null, videoId: "dQw4w9WgXcQ" },
+  { id: 2, title: "Вилла «Лесной массив»", category: "Типовой проект", area: "320 м²", year: "2024", image: AERIAL_IMG, photos: [AERIAL_IMG, HERO_IMG, INTERIOR_IMG], author: null, date: null, videoId: "dQw4w9WgXcQ" },
+  { id: 3, title: "Особняк «Панорама»", category: "Индивидуальный проект", area: "620 м²", year: "2023", image: INTERIOR_IMG, photos: [INTERIOR_IMG, AERIAL_IMG, HERO_IMG], author: null, date: null, videoId: "dQw4w9WgXcQ" },
+  { id: 4, title: "Усадьба «Берег»", category: "Типовой проект", area: "280 м²", year: "2023", image: HERO_IMG, photos: [HERO_IMG, AERIAL_IMG, INTERIOR_IMG], author: null, date: null, videoId: "dQw4w9WgXcQ" },
 ];
 
 const processSteps = [
@@ -46,7 +46,11 @@ export default function Index() {
   const [activeNav, setActiveNav] = useState("главная");
   const [videoModal, setVideoModal] = useState<string | null>(null);
   const [photoModal, setPhotoModal] = useState<{ photos: string[]; index: number; title: string } | null>(null);
+  const [cardPhotoIndex, setCardPhotoIndex] = useState<Record<number, number>>({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const getCardPhoto = (id: number) => cardPhotoIndex[id] ?? 0;
+  const setCardPhoto = (id: number, idx: number) => setCardPhotoIndex(prev => ({ ...prev, [id]: idx }));
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
@@ -177,56 +181,108 @@ export default function Index() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {projects.map((project, i) => (
-            <div key={project.id} className="project-card scroll-fade group" style={{ height: i === 0 ? "500px" : "360px" }}>
-              <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
-              <div className="overlay" />
-              {project.date && (
-                <div className="absolute top-4 left-4 px-3 py-1 text-xs tracking-wider"
-                  style={{ background: "var(--gold)", color: "var(--obsidian)", fontFamily: "Montserrat", fontWeight: 600 }}>
-                  {project.date}
-                </div>
-              )}
-              <div className="absolute inset-0 flex flex-col justify-end p-8">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="section-tag" style={{ opacity: 0.8 }}>{project.category}</span>
-                  <span className="text-xs" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>· {project.area} · {project.year}</span>
-                </div>
-                <h3 className="font-light text-2xl md:text-3xl mb-4" style={{ fontFamily: "Cormorant Garamond, serif", color: "var(--cream)" }}>{project.title}</h3>
-                {project.author && (
-                  <div className="text-xs mb-3" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>
-                    Фото: {project.author}
+          {projects.map((project, i) => {
+            const photos = project.photos.length > 0 ? project.photos : [project.image];
+            const activeIdx = getCardPhoto(project.id);
+            const prevPhoto = (e: React.MouseEvent) => { e.stopPropagation(); setCardPhoto(project.id, (activeIdx - 1 + photos.length) % photos.length); };
+            const nextPhoto = (e: React.MouseEvent) => { e.stopPropagation(); setCardPhoto(project.id, (activeIdx + 1) % photos.length); };
+
+            return (
+              <div key={project.id} className="project-card scroll-fade group" style={{ height: i === 0 ? "500px" : "360px" }}>
+                {/* Photos */}
+                {photos.map((photo, pi) => (
+                  <img key={pi} src={photo} alt={project.title}
+                    className="w-full h-full object-cover absolute inset-0"
+                    style={{ opacity: pi === activeIdx ? 1 : 0, transition: "opacity 0.5s ease" }} />
+                ))}
+                <div className="overlay" />
+
+                {/* Date badge */}
+                {project.date && (
+                  <div className="absolute top-4 left-4 px-3 py-1 text-xs tracking-wider z-10"
+                    style={{ background: "var(--gold)", color: "var(--obsidian)", fontFamily: "Montserrat", fontWeight: 600 }}>
+                    {project.date}
                   </div>
                 )}
-                <div className="flex items-center gap-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  {project.photos.length > 0 && (
-                    <button className="flex items-center gap-2 text-xs tracking-widest uppercase"
-                      style={{ fontFamily: "Montserrat", color: "var(--gold)" }}
-                      onClick={() => setPhotoModal({ photos: project.photos, index: 0, title: project.title })}>
-                      <div className="w-8 h-8 border rounded-full flex items-center justify-center" style={{ borderColor: "var(--gold)" }}>
-                        <Icon name="Images" size={12} style={{ color: "var(--gold)" }} />
-                      </div>
-                      Фото ({project.photos.length})
-                    </button>
-                  )}
-                  {project.videoId && (
-                    <button className="flex items-center gap-2 text-xs tracking-widest uppercase"
-                      style={{ fontFamily: "Montserrat", color: "var(--gold)" }}
-                      onClick={() => setVideoModal(project.videoId)}>
-                      <div className="w-8 h-8 border rounded-full flex items-center justify-center" style={{ borderColor: "var(--gold)" }}>
-                        <Icon name="Play" size={12} style={{ color: "var(--gold)" }} />
-                      </div>
-                      Видео-тур
-                    </button>
-                  )}
-                  <button className="text-xs tracking-widest uppercase transition-colors hover:text-gold"
-                    style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>
-                    Подробнее →
+
+                {/* Photo counter */}
+                {photos.length > 1 && (
+                  <div className="absolute top-4 right-4 px-2 py-1 text-xs z-10"
+                    style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(6px)", fontFamily: "Montserrat", color: "var(--cream-muted)", border: "1px solid rgba(201,168,76,0.2)" }}>
+                    {activeIdx + 1} / {photos.length}
+                  </div>
+                )}
+
+                {/* Arrow prev */}
+                {photos.length > 1 && (
+                  <button onClick={prevPhoto}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                    style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", border: "1px solid rgba(201,168,76,0.3)" }}>
+                    <Icon name="ChevronLeft" size={16} style={{ color: "var(--cream)" }} />
                   </button>
+                )}
+
+                {/* Arrow next */}
+                {photos.length > 1 && (
+                  <button onClick={nextPhoto}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                    style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", border: "1px solid rgba(201,168,76,0.3)" }}>
+                    <Icon name="ChevronRight" size={16} style={{ color: "var(--cream)" }} />
+                  </button>
+                )}
+
+                {/* Dots */}
+                {photos.length > 1 && (
+                  <div className="absolute bottom-20 left-0 right-0 flex justify-center gap-1.5 z-10">
+                    {photos.map((_, di) => (
+                      <button key={di}
+                        onClick={(e) => { e.stopPropagation(); setCardPhoto(project.id, di); }}
+                        style={{
+                          width: di === activeIdx ? "20px" : "6px",
+                          height: "3px",
+                          background: di === activeIdx ? "var(--gold)" : "rgba(255,255,255,0.5)",
+                          transition: "all 0.3s ease",
+                        }} />
+                    ))}
+                  </div>
+                )}
+
+                {/* Info */}
+                <div className="absolute inset-0 flex flex-col justify-end p-8 z-10">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="section-tag" style={{ opacity: 0.8 }}>{project.category}</span>
+                    <span className="text-xs" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>· {project.area} · {project.year}</span>
+                  </div>
+                  <h3 className="font-light text-2xl md:text-3xl mb-4" style={{ fontFamily: "Cormorant Garamond, serif", color: "var(--cream)" }}>{project.title}</h3>
+                  {project.author && (
+                    <div className="text-xs mb-3" style={{ fontFamily: "Montserrat", color: "var(--cream-muted)" }}>Фото: {project.author}</div>
+                  )}
+                  <div className="flex items-center gap-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {photos.length > 0 && (
+                      <button className="flex items-center gap-2 text-xs tracking-widest uppercase"
+                        style={{ fontFamily: "Montserrat", color: "var(--gold)" }}
+                        onClick={() => setPhotoModal({ photos, index: activeIdx, title: project.title })}>
+                        <div className="w-8 h-8 border rounded-full flex items-center justify-center" style={{ borderColor: "var(--gold)" }}>
+                          <Icon name="Expand" size={12} style={{ color: "var(--gold)" }} />
+                        </div>
+                        Открыть
+                      </button>
+                    )}
+                    {project.videoId && (
+                      <button className="flex items-center gap-2 text-xs tracking-widest uppercase"
+                        style={{ fontFamily: "Montserrat", color: "var(--gold)" }}
+                        onClick={() => setVideoModal(project.videoId)}>
+                        <div className="w-8 h-8 border rounded-full flex items-center justify-center" style={{ borderColor: "var(--gold)" }}>
+                          <Icon name="Play" size={12} style={{ color: "var(--gold)" }} />
+                        </div>
+                        Видео-тур
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
