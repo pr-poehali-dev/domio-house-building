@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Icon from "@/components/ui/icon";
 
-const HERO_IMG = "https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/files/3f52b296-a5a7-48d9-9a69-f4a4b34f2f6a.jpg";
+const HERO_IMG = "https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/bucket/b3383b04-eec7-43b6-94ce-00106d81df4d.png";
 const INTERIOR_IMG = "https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/files/35b734c6-bf9d-4147-a539-db6a1654b616.jpg";
 const AERIAL_IMG = "https://cdn.poehali.dev/projects/77ed5ead-d5f0-47ca-832a-0e2e1bfbe5b5/files/5529b4d0-bddf-477a-841a-d63255838237.jpg";
 
@@ -68,6 +68,19 @@ export default function Index() {
 
   const navItems = ["Главная", "Проекты", "Типовые проекты", "О компании", "Контакты"];
 
+  const navAnchors: Record<string, string> = {
+    "Главная": "hero",
+    "Проекты": "projects",
+    "Типовые проекты": "typical",
+    "О компании": "about",
+    "Контакты": "contacts",
+  };
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden" style={{ background: "var(--obsidian)" }}>
 
@@ -86,13 +99,13 @@ export default function Index() {
           {navItems.map((item) => (
             <button key={item} className="nav-link"
               style={{ color: activeNav === item.toLowerCase() ? "var(--gold)" : undefined }}
-              onClick={() => setActiveNav(item.toLowerCase())}>
+              onClick={() => { setActiveNav(item.toLowerCase()); scrollTo(navAnchors[item]); }}>
               {item}
             </button>
           ))}
         </div>
 
-        <button className="btn-gold hidden md:block" onClick={() => {}}>
+        <button className="btn-gold hidden md:block" onClick={() => scrollTo("contacts")}>
           <span>Консультация</span>
         </button>
 
@@ -105,7 +118,7 @@ export default function Index() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 flex flex-col items-center justify-center gap-8" style={{ background: "var(--obsidian)" }}>
           {navItems.map((item) => (
-            <button key={item} onClick={() => setMobileMenuOpen(false)}
+            <button key={item} onClick={() => { setMobileMenuOpen(false); scrollTo(navAnchors[item]); }}
               className="font-display text-3xl transition-colors hover:text-gold"
               style={{ fontFamily: "Cormorant Garamond, serif", color: "var(--cream)" }}>
               {item}
@@ -115,7 +128,7 @@ export default function Index() {
       )}
 
       {/* HERO */}
-      <section className="relative flex items-end pb-20 overflow-hidden" style={{ height: "100vh" }}>
+      <section id="hero" className="relative flex items-end pb-20 overflow-hidden" style={{ height: "100vh" }}>
         <div className="absolute inset-0">
           <img src={HERO_IMG} alt="DOMIO Hero" className="w-full h-full object-cover" />
           <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(13,13,11,0.88) 0%, rgba(13,13,11,0.4) 60%, rgba(13,13,11,0.15) 100%)" }} />
@@ -133,7 +146,7 @@ export default function Index() {
             Создаём архитектурные шедевры, отражающие вашу индивидуальность. Каждый проект — это диалог между природой, пространством и человеком.
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            <button className="btn-gold-filled" onClick={() => {}}>
+            <button className="btn-gold-filled" onClick={() => scrollTo("projects")}>
               Смотреть проекты
             </button>
             <div className="flex items-center gap-3">
